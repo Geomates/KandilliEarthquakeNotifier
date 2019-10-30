@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Description: Earthquake notifier that pulls data from Kandilli website.
+
+Resources:
+  KEarthquakeNotifier:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: KEarthquakeNotifier
+      Handler: KandilliEarthquakeNotifier::KandilliEarthquakeNotifier.Function::FunctionHandler
+      Runtime: dotnetcore2.1
+      CodeUri: ./src/KandilliEarthquakeNotifier/
+      Description: Earthquake notifier that pulls data from Kandilli website.
+      MemorySize: 256
+      Timeout: 30
+      Role: arn:aws:iam::065627307699:role/KandilliEarthquakeNotifierRole
+      Environment:
+        Variables:
+          TELEGRAM_CHANNEL_NAME: kandillisondepremler
+          BOOKMARK_STORE_BUCKET: kandilli-earthquake-notifier
+          BOOKMARK_STORE_PREFIX: bookmarks
+          KANDILLI_PAGE_URL: !Ref KandilliPageUrl
+          TELEGRAM_API_TOKEN: !Ref TelegramAPIToken
+      Events:
+        KEarthquakeNotifierRule:
+            Type: Schedule
+            Properties:
+              Schedule: rate(1 minute)
+              Name: KEarthquakeNotifierRule
+              Enabled: True
+Parameters:
+  TelegramAPIToken:
+    Type: String
+  KandilliPageUrl:
+    Type: String

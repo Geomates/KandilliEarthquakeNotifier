@@ -1,0 +1,9 @@
+{
+  "region": "eu-west-1",
+  "configuration": "Release",
+  "framework": "netcoreapp2.1",
+  "stack-name": "KandilliEarthQuakeNotifierStack",
+  "s3-bucket": "kandilli-earthquake-notifier",
+  "s3-prefix": "builds/",
+  "template": "template.yml"
+}
