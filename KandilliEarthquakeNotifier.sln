@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KandilliEarthquakeNotifier"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{BD71B000-C85A-47F0-BCE9-CE5E5B56C48E}"
 	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
 		.travis.yml = .travis.yml
+		aws-lambda-tools-defaults.json = aws-lambda-tools-defaults.json
+		Readme.md = Readme.md
 		template.yml = template.yml
 	EndProjectSection
 EndProject
