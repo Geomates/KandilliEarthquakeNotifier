@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace KandilliEarthquakeNotifier.Services
@@ -26,7 +27,16 @@ namespace KandilliEarthquakeNotifier.Services
 
         public async Task<bool> SendMessage(string message, bool isSilent = false)
         {
-            string urlString = $"{TELEGRAM_API_URL}/bot{_apiToken}/sendMessage?chat_id=@{_channelName}&text={message}&disable_notification={isSilent}";
+            string[] queryParameters = new string[]
+            {
+                $"chat_id=@{_channelName}",
+                $"disable_notification={isSilent}",
+                "disable_web_page_preview=true",
+                $"parse_mode=markdown",
+                $"text={Uri.EscapeDataString(message)}"
+            };
+
+            string urlString = $"{TELEGRAM_API_URL}/bot{_apiToken}/sendMessage?{string.Join('&', queryParameters)}";
 
             using (HttpClient client = new HttpClient())
             using (HttpResponseMessage reponse = await client.GetAsync(urlString))
