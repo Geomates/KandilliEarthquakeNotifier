@@ -1,5 +1,6 @@
+using Common.Services;
 using HtmlAgilityPack;
-using KandilliEarthquakeNotifier.Entities;
+using KandilliEarthquakePuller.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace KandilliEarthquakeNotifier.Services
+namespace KandilliEarthquakePuller.Services
 {
     public interface IKandilliService
     {

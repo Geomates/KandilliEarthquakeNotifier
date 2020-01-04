@@ -1,66 +1,39 @@
-using System;
-using System.Linq;
-using Amazon.Lambda.Serialization.Json;
 using Amazon.Lambda.Core;
-using Amazon.Lambda.CloudWatchEvents;
+using Amazon.Lambda.SQSEvents;
+using Common.Models;
+using Common.Services;
 using Microsoft.Extensions.DependencyInjection;
-using KandilliEarthquakeNotifier.Services;
-using Amazon.S3;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-[assembly: LambdaSerializer(typeof(JsonSerializer))]
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace KandilliEarthquakeNotifier
 {
     public class Function
     {
-        public async Task FunctionHandler(CloudWatchEvent<object> cloudWatchLogsEvent, ILambdaContext context)
+        public async Task FunctionHandler(SQSEvent sqsEvent, ILambdaContext context)
         {
+            LambdaLogger.Log("Start\n");
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
-            var serviceProvider = serviceCollection.BuildServiceProvider();            
 
-            var bookmarkService = serviceProvider.GetService<IBookmarkService>();
-            var kandilliService = serviceProvider.GetService<IKandilliService>();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
             var telegramService = serviceProvider.GetService<ITelegramService>();
 
-            var lastFetch = await bookmarkService.GetBookmark("last_fetch_date");
-
-            DateTime.TryParse(lastFetch, out DateTime lastFetchDate);           
-
-            var earthquakes = await kandilliService.GetEarthquakes();
-
-            var newEarthquakes = earthquakes
-                .Where(q => q.Date > lastFetchDate)
-                .OrderByDescending(q => q.Date)
-                .Take(10)
-                .OrderBy(q => q.Date);
-
-            var lastNotifiedEarthQuake = lastFetchDate;
-
-            foreach(var newEarthQuake in newEarthquakes)
+            foreach (var record in sqsEvent.Records)
             {
-                var result = await telegramService.SendMessage(newEarthQuake.ToTelegramMessage(), newEarthQuake.Magnitude < 4);
-                if (!result)
-                {
-                    break;
-                }
-                lastNotifiedEarthQuake = newEarthQuake.Date;
+                LambdaLogger.Log($"Message ID: {record.MessageId}");
+                var telegramMessage = JsonConvert.DeserializeObject<TelegramMessage>(record.Body);
+                await telegramService.SendMessage(telegramMessage);
             }
 
-            await bookmarkService.SetBookmark("last_fetch_date", lastNotifiedEarthQuake.ToString());
+            LambdaLogger.Log($"Processed {sqsEvent.Records.Count} records.\n");
         }
 
         private void ConfigureServices(ServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IBookmarkService, BookmarkService>();
-            serviceCollection.AddTransient<IKeyValueStore, AmazonS3Service>();
             serviceCollection.AddTransient<IEnvironmentService, EnvironmentService>();
-            serviceCollection.AddTransient<IKandilliService, KandilliService>();
             serviceCollection.AddTransient<ITelegramService, TelegramService>();
-            serviceCollection.AddAWSService<IAmazonS3>(new Amazon.Extensions.NETCore.Setup.AWSOptions()
-            {
-                Region = Amazon.RegionEndpoint.EUWest1
-            });
         }
     }
 }

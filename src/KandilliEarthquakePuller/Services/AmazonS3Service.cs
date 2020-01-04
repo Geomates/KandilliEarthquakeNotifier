@@ -1,9 +1,10 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Common.Services;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace KandilliEarthquakeNotifier.Services
+namespace KandilliEarthquakePuller.Services
 {
     public interface IKeyValueStore
     {

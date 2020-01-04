@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KandilliEarthquakeNotifier.Services
+namespace Common.Services
 {
     public interface IEnvironmentService
     {
