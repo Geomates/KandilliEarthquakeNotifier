@@ -262,3 +262,5 @@ __pycache__/
 .vscode/
 .aws-sam/
 src/KandilliEarthquakeNotifier/Properties/launchSettings.json
+src/KandilliEarthquakeBot/Properties/launchSettings.json
+src/KandilliEarthquakePuller/Properties/launchSettings.json

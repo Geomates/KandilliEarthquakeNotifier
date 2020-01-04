@@ -1,6 +1,6 @@
 using System;
 
-namespace KandilliEarthquakeNotifier.Entities
+namespace KandilliEarthquakePuller.Models
 {
     public class Earthquake
     {

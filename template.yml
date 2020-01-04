@@ -1,36 +1,87 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 
-Description: Earthquake notifier that pulls data from Kandilli website.
+Description: Earthquake notification system that pulls data from Kandilli website and distribute to subscribers.
 
 Resources:
-  KEarthquakeNotifier:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: KEarthquakeNotifier
-      Handler: KandilliEarthquakeNotifier::KandilliEarthquakeNotifier.Function::FunctionHandler
-      Runtime: dotnetcore2.1
-      CodeUri: ./src/KandilliEarthquakeNotifier/
-      Description: Earthquake notifier that pulls data from Kandilli website.
-      MemorySize: 256
-      Timeout: 30
-      Role: arn:aws:iam::065627307699:role/KandilliEarthquakeNotifierRole
-      Environment:
-        Variables:
-          TELEGRAM_CHANNEL_NAME: kandillisondepremler
-          BOOKMARK_STORE_BUCKET: kandilli-earthquake-notifier
-          BOOKMARK_STORE_PREFIX: bookmarks
-          KANDILLI_PAGE_URL: !Ref KandilliPageUrl
-          TELEGRAM_API_TOKEN: !Ref TelegramAPIToken
-      Events:
-        KEarthquakeNotifierRule:
-            Type: Schedule
-            Properties:
-              Schedule: rate(1 minute)
-              Name: KEarthquakeNotifierRule
-              Enabled: True
+    KEarthquakeApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            OpenApiVersion: '2.0'
+            Name: KEarthquakeApi
+            StageName: prod
+    KEarthquakeNotifier:
+        Type: 'AWS::Serverless::Function'
+        Properties:
+            FunctionName: KEarthquakeNotifier
+            Handler: KandilliEarthquakeNotifier::KandilliEarthquakeNotifier.Function::FunctionHandler
+            Runtime: dotnetcore2.1
+            CodeUri: ./src/KandilliEarthquakeNotifier/
+            Description: Earthquake notifier to Telegram subscribers
+            MemorySize: 256
+            Timeout: 30
+            Role: arn:aws:iam::065627307699:role/KandilliEarthquakeNotifierRole
+            Environment:
+                Variables:
+                    TELEGRAM_API_TOKEN: !Ref TelegramAPIToken
+            Events:
+                KEarthquakeQueue:
+                    Type: SQS
+                    Properties:
+                        BatchSize: 10
+                        Enabled: true
+                        Queue: arn:aws:sqs:eu-west-1:065627307699:kandilliearthquakes
+    KEarthquakePuller:
+        Type: 'AWS::Serverless::Function'
+        Properties:
+            FunctionName: KEarthquakePuller
+            Handler: KandilliEarthquakePuller::KandilliEarthquakePuller.Function::FunctionHandler
+            Runtime: dotnetcore2.1
+            CodeUri: ./src/KandilliEarthquakePuller/
+            Description: Earthquake puller and distributer. Pulls data from Kandilli website.
+            MemorySize: 256
+            Timeout: 300
+            Role: arn:aws:iam::065627307699:role/KandilliEarthquakePullerRole
+            Environment:
+                Variables:
+                    TELEGRAM_CHANNEL_NAME: kandillisondepremler
+                    BOOKMARK_STORE_BUCKET: kandilli-earthquake-notifier
+                    BOOKMARK_STORE_PREFIX: bookmarks
+                    DYNAMODB_TABLE_NAME: KandilliSubscribers
+                    SQS_QUEUE_URL: https://sqs.eu-west-1.amazonaws.com/065627307699/kandilliearthquakes
+                    KANDILLI_PAGE_URL: !Ref KandilliPageUrl
+            Events:
+                KEarthquakePullerRule:
+                    Type: Schedule
+                    Properties:
+                        Schedule: rate(1 minute)
+                        Name: KEarthquakePullerRule
+                        Enabled: True
+    KEarthquakeBot:
+        Type: 'AWS::Serverless::Function'
+        Properties:
+            FunctionName: KEarthquakeBot
+            Handler: KandilliEarthquakeBot::KandilliEarthquakeBot.Function::FunctionHandler
+            Runtime: dotnetcore2.1
+            CodeUri: ./src/KandilliEarthquakeBot/
+            Description: Earthquake bot to notify subscribers based on their preferences.
+            MemorySize: 256
+            Timeout: 30
+            Role: arn:aws:iam::065627307699:role/KandilliEarthquakeBotRole
+            Environment:
+                Variables:
+                    DYNAMODB_TABLE_NAME: KandilliSubscribers
+                    TELEGRAM_API_TOKEN: !Ref TelegramAPIToken
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties:
+                        Method: POST
+                        Path: /bot
+                        RestApiId:
+                            Ref: KEarthquakeApi
 Parameters:
-  TelegramAPIToken:
-    Type: String
-  KandilliPageUrl:
-    Type: String
+    TelegramAPIToken:
+        Type: String
+    KandilliPageUrl:
+        Type: String

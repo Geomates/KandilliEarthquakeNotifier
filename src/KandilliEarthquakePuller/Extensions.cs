@@ -1,7 +1,7 @@
-﻿using KandilliEarthquakeNotifier.Entities;
+﻿using KandilliEarthquakePuller.Models;
 using System.Text;
 
-namespace KandilliEarthquakeNotifier
+namespace KandilliEarthquakePuller
 {
     public static class Extensions
     {

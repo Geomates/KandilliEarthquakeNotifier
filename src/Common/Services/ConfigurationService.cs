@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace KandilliEarthquakeNotifier.Services
+namespace Common.Services
 {
     public interface IConfigurationService
     {
