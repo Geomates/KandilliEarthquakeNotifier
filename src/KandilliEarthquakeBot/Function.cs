@@ -59,7 +59,7 @@ namespace KandilliEarthquakeBot
                     case BotDialog.ASK_MAGNITUDE:
                         if (double.TryParse(webhookMessage.CallbackQuery.Data, out double magnitude))
                         {
-                            await botService.SetMagnitudeAsync(webhookMessage.CallbackQuery.Message.MessageId, webhookMessage.CallbackQuery.Message.Chat.Id, magnitude);
+                            await botService.SetMagnitudeAsync(webhookMessage.CallbackQuery.Message.MessageId, webhookMessage.CallbackQuery.Id, webhookMessage.CallbackQuery.Message.Chat.Id, magnitude);
                         }                        
                         break;
                 }

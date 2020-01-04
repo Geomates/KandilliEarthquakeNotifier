@@ -3,7 +3,6 @@ using Common.Services;
 using KandilliEarthquakeBot.Enums;
 using KandilliEarthquakeBot.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,7 +12,7 @@ namespace KandilliEarthquakeBot.Services
     {
         Task<bool> AskLocationAsync(int chatId);
         Task<bool> AskMagnitudeAsync(int chatId);
-        Task<bool> SetMagnitudeAsync(int linkedMessageId, int chatId, double magnitude);
+        Task<bool> SetMagnitudeAsync(int linkedMessageId, string callbackQueryId, int chatId, double magnitude);
         Task<bool> SetLocationAsync(int chatId, Location location);
         Task<bool> StartSubscriptionAsync(int chatId);
         Task<bool> RemoveSubscriptionAsync(int chatId);
@@ -103,7 +102,7 @@ namespace KandilliEarthquakeBot.Services
             return _telegramService.SendMessage(message);
         }
 
-        public async Task<bool> SetMagnitudeAsync(int linkedMessageId, int chatId, double magnitude)
+        public async Task<bool> SetMagnitudeAsync(int linkedMessageId, string callbackQueryId, int chatId, double magnitude)
         {
             var updateRequest = _updateRequestBuilder
                                     .CreateRequest(chatId)
@@ -123,6 +122,13 @@ namespace KandilliEarthquakeBot.Services
                 MessageId = linkedMessageId
             };
             await _telegramService.DeleteMessage(deleteMessage);
+
+            var answerCallbackQuery = new AnswerCallbackQuery
+            {
+                CallbackQueryId = callbackQueryId,
+                Text = string.Format(BotDialog.REPLY_MAGNITUDE, magnitude)
+            };
+            await _telegramService.AnswerCallbackQuery(answerCallbackQuery);
 
             var message = new TelegramMessage
             {
