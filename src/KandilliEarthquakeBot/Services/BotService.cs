@@ -14,6 +14,7 @@ namespace KandilliEarthquakeBot.Services
         Task<bool> AskMagnitudeAsync(int chatId);
         Task<bool> SetMagnitudeAsync(int linkedMessageId, string callbackQueryId, int chatId, double magnitude);
         Task<bool> SetLocationAsync(int chatId, Location location);
+        Task<bool> RemoveLocationAsync(int chatId);
         Task<bool> StartSubscriptionAsync(int chatId);
         Task<bool> RemoveSubscriptionAsync(int chatId);
     }
@@ -171,6 +172,29 @@ namespace KandilliEarthquakeBot.Services
             };
 
             return _telegramService.SendMessage(message);
+        }
+
+        public async Task<bool> RemoveLocationAsync(int chatId)
+        {
+            var updateRequest = _updateRequestBuilder
+                                    .CreateRequest(chatId)
+                                    .RemoveLocation()
+                                    .Build();
+
+            var updateResult = await _subscribtionStore.UpdateAsync(updateRequest);
+
+            if (!updateResult)
+            {
+                return false;
+            }
+
+            var message = new TelegramMessage
+            {
+                ChatId = chatId.ToString(),
+                Text = BotDialog.REMOVED_LOCATION
+            };
+
+            return await _telegramService.SendMessage(message);
         }
     }
 }

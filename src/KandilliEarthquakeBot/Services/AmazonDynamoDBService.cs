@@ -36,13 +36,14 @@ namespace KandilliEarthquakeBot.Services
                 Key = new Dictionary<string, AttributeValue> { { "chatid", new AttributeValue { S = updateRequest.SubscriptionId.ToString() } } }
             };
 
+            var expressionAttributeNames = new Dictionary<string, string>();
+            int i = 0;
+
             if (updateRequest.UpdatedProperties.Count() > 0)
             {
-                var expressionAttributeValues = new Dictionary<string, AttributeValue>();
-                var expressionAttributeNames = new Dictionary<string, string>();
+                var expressionAttributeValues = new Dictionary<string, AttributeValue>();               
 
-                List<string> updateExpressions = new List<string>();
-                int i = 0;
+                List<string> updateExpressions = new List<string>();                
                 foreach (var updatedProperty in updateRequest.UpdatedProperties)
                 {
                     updateExpressions.Add($"#P{i}=:P{i}val");
@@ -59,10 +60,23 @@ namespace KandilliEarthquakeBot.Services
                     }
                     i++;
                 }
-                updateItemRequest.UpdateExpression = "SET " + string.Join(',', updateExpressions);
-                updateItemRequest.ExpressionAttributeNames = expressionAttributeNames;
+                updateItemRequest.UpdateExpression = "SET " + string.Join(',', updateExpressions);                
                 updateItemRequest.ExpressionAttributeValues = expressionAttributeValues;
             }
+
+            if (updateRequest.RemovedProperties.Count() > 0)            
+            {
+                List<string> removedExpressionArguments = new List<string>();
+                foreach (var removedProperty in updateRequest.RemovedProperties)
+                {
+                    expressionAttributeNames.Add($"#P{i}", removedProperty);
+                    removedExpressionArguments.Add($"#P{i}");
+                    i++;
+                }
+                updateItemRequest.UpdateExpression += " REMOVE " + string.Join(',', removedExpressionArguments);
+                updateItemRequest.UpdateExpression = updateItemRequest.UpdateExpression.Trim();
+            }
+            updateItemRequest.ExpressionAttributeNames = expressionAttributeNames;
 
             var response = await _amazonDynamoDB.UpdateItemAsync(updateItemRequest);
 

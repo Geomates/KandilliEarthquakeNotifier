@@ -43,6 +43,9 @@ namespace KandilliEarthquakeBot
                     case Command.Location:
                         await botService.AskLocationAsync(webhookMessage.Message.Chat.Id);
                         break;
+                    case Command.RemoveLocation:
+                        await botService.RemoveLocationAsync(webhookMessage.Message.Chat.Id);
+                        break;
                 }
             }
 

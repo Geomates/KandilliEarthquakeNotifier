@@ -1,6 +1,7 @@
 ﻿using Common.Helpers;
 using KandilliEarthquakeBot.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace KandilliEarthquakeBot.Services
 {
@@ -9,6 +10,7 @@ namespace KandilliEarthquakeBot.Services
         SubscriptionUpdateRequest Build();
         SubscriptionUpdateRequestBuilder CreateRequest(int subscriptionId);
         SubscriptionUpdateRequestBuilder SetLocation(Location location);
+        SubscriptionUpdateRequestBuilder RemoveLocation();
         SubscriptionUpdateRequestBuilder SetMagnitude(double magnitude);
     }
 
@@ -16,6 +18,7 @@ namespace KandilliEarthquakeBot.Services
     {
         private SubscriptionUpdateRequest _subscriptionUpdateRequest;
         private List<UpdatedSubscriberProperty> _updatedProperties;
+        private List<string> _removedProperties;
 
         public SubscriptionUpdateRequestBuilder CreateRequest(int subscriptionId)
         {
@@ -25,6 +28,7 @@ namespace KandilliEarthquakeBot.Services
             };
 
             _updatedProperties = new List<UpdatedSubscriberProperty>();
+            _removedProperties = new List<string>();
 
             return this;
         }
@@ -43,6 +47,9 @@ namespace KandilliEarthquakeBot.Services
 
         public SubscriptionUpdateRequestBuilder SetLocation(Location location)
         {
+            _removedProperties.Remove("Location");
+            _removedProperties.Remove("LocationHash");
+
             _updatedProperties.Add(new UpdatedSubscriberProperty
             {
                 Name = "Location",
@@ -60,9 +67,18 @@ namespace KandilliEarthquakeBot.Services
             return this;
         }
 
+        public SubscriptionUpdateRequestBuilder RemoveLocation()
+        {
+            _updatedProperties = _updatedProperties.Where(p => p.Name != "Location" || p.Name != "LocationHash").ToList();
+            _removedProperties.Add("Location");
+            _removedProperties.Add("LocationHash");
+            return this;
+        }
+
         public SubscriptionUpdateRequest Build()
         {
             _subscriptionUpdateRequest.UpdatedProperties = _updatedProperties;
+            _subscriptionUpdateRequest.RemovedProperties = _removedProperties;
             return _subscriptionUpdateRequest;
         }
     }

@@ -3,9 +3,10 @@
     public enum Command
     {
         None = 0,
-        Start = 1,
-        Magnitude = 2,
-        Location = 3,
-        Stop = 4
+        Start = 100,
+        Magnitude = 200,
+        Location = 300,
+        RemoveLocation = 301,
+        Stop = 400
     }
 }
