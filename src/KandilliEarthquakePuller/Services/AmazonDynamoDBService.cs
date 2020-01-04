@@ -1,6 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Common.Helpers;
 using Common.Services;
+using Google.Common.Geometry;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +10,7 @@ namespace KandilliEarthquakePuller.Services
 {
     public interface ISubscribtionService
     {
-        Task<IEnumerable<int>> GetByMagnitudeAsync(double magnitude);
+        Task<IEnumerable<int>> GetAsync(double magnitude, double latitude, double longitude, int searchRadius);
     }
 
     public class AmazonDynamoDBService : ISubscribtionService
@@ -24,9 +26,11 @@ namespace KandilliEarthquakePuller.Services
             _tableName = environmentService.GetEnvironmentValue(TABLE_NAME);
         }
 
-        public async Task<IEnumerable<int>> GetByMagnitudeAsync(double magnitude)
+        public async Task<IEnumerable<int>> GetAsync(double magnitude, double latitude, double longitude, int searchRadius)
         {
             var result = new List<int>();
+
+            var searchRectangle = S2Manager.GetBoundingLatLngRect(latitude, longitude, searchRadius);
 
             Dictionary<string, Condition> conditions = new Dictionary<string, Condition>
             {
@@ -40,27 +44,42 @@ namespace KandilliEarthquakePuller.Services
                 }
             };
 
-            ScanRequest request = new ScanRequest
-            {
-                TableName = _tableName,
-                ExclusiveStartKey = null,
-                ScanFilter = conditions
-            };
+            Dictionary<string, AttributeValue> lastEvaluatedKey = null;
 
-            ScanResponse scanResponse = await _amazonDynamoDB.ScanAsync(request);
-
-            foreach (var item in scanResponse.Items)
+            do 
             {
-                if (
-                    !item.ContainsKey("Magnitude") ||
-                    (item.ContainsKey("Magnitude") && double.TryParse(item["Magnitude"].N, out double minMagnitude) && magnitude >= minMagnitude))
+                ScanRequest request = new ScanRequest
+                {
+                    TableName = _tableName,
+                    ScanFilter = conditions
+                };
+
+                if (lastEvaluatedKey != null && lastEvaluatedKey.ContainsKey("chatid"))
+                {
+                    request.ExclusiveStartKey["chatid"] = lastEvaluatedKey["chatid"];
+                }
+
+                ScanResponse scanResponse = await _amazonDynamoDB.ScanAsync(request);
+
+                foreach (var item in scanResponse.Items)
                 {
                     if (item.ContainsKey("chatid") && int.TryParse(item["chatid"].S, out int chatId))
                     {
-                        result.Add(chatId);
+                        if (item.ContainsKey("LocationHash"))
+                        {
+                            if (ulong.TryParse(item["LocationHash"].N, out ulong locationHash) && searchRectangle.Intersects(new S2Cell(new S2CellId(locationHash))))
+                            {
+                                result.Add(chatId);
+                            }
+                        }
+                        else
+                        {
+                            result.Add(chatId);
+                        }
                     }
                 }
-            }
+                lastEvaluatedKey = scanResponse.LastEvaluatedKey;
+            } while (lastEvaluatedKey != null && lastEvaluatedKey.Count > 0);
 
             return result;
         }

@@ -7,7 +7,7 @@ namespace KandilliEarthquakeBot.Helpers
     {
         public static bool TryParseCommand(string chatMessage, out Command command)
         {
-            string pattern = @"\/(basla|siddet|konum)";
+            string pattern = @"\/(basla|start|siddet|konum|bitir|stop)";
             command = Command.None;
             var result = Regex.Match(chatMessage, pattern);
 
@@ -17,7 +17,12 @@ namespace KandilliEarthquakeBot.Helpers
                 switch(regexGroup.Value)
                 {
                     case "basla":
+                    case "start":
                         command = Command.Start;
+                        break;
+                    case "bitir":
+                    case "stop":
+                        command = Command.Stop;
                         break;
                     case "siddet":
                         command = Command.Magnitude;

@@ -1,4 +1,4 @@
-﻿using KandilliEarthquakeBot.Helpers;
+﻿using Common.Helpers;
 using KandilliEarthquakeBot.Models;
 using System.Collections.Generic;
 
@@ -50,20 +50,11 @@ namespace KandilliEarthquakeBot.Services
                 Value = $"{location.Latitude},{location.Longitude}"
             });
 
-            var geohash = S2Manager.GenerateGeohash(location);
-
             _updatedProperties.Add(new UpdatedSubscriberProperty
             {
                 Name = "LocationHash",
                 Type = typeof(ulong),
-                Value = geohash
-            });
-
-            _updatedProperties.Add(new UpdatedSubscriberProperty
-            {
-                Name = "LocationHashKey",
-                Type = typeof(ulong),
-                Value = S2Manager.GenerateHashKey(geohash, 4)
+                Value = S2Manager.GenerateGeohash(location.Latitude, location.Longitude)
             });
 
             return this;

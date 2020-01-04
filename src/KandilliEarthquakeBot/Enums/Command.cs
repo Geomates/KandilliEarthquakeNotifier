@@ -5,6 +5,7 @@
         None = 0,
         Start = 1,
         Magnitude = 2,
-        Location = 3
+        Location = 3,
+        Stop = 4
     }
 }

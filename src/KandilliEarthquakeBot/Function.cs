@@ -34,6 +34,9 @@ namespace KandilliEarthquakeBot
                     case Command.Start:
                         await botService.StartSubscriptionAsync(webhookMessage.Message.Chat.Id);
                         break;
+                    case Command.Stop:
+                        await botService.RemoveSubscriptionAsync(webhookMessage.Message.Chat.Id);
+                        break;
                     case Command.Magnitude:
                         await botService.AskMagnitudeAsync(webhookMessage.Message.Chat.Id);
                         break;

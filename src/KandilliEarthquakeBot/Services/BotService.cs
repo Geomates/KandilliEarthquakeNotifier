@@ -16,6 +16,7 @@ namespace KandilliEarthquakeBot.Services
         Task<bool> SetMagnitudeAsync(string callbackQueryId, int chatId, double magnitude);
         Task<bool> SetLocationAsync(int chatId, Location location);
         Task<bool> StartSubscriptionAsync(int chatId);
+        Task<bool> RemoveSubscriptionAsync(int chatId);
     }
 
     public class BotService : IBotService
@@ -48,6 +49,28 @@ namespace KandilliEarthquakeBot.Services
             {
                 ChatId = chatId.ToString(),
                 Text = BotDialog.START_SUBSCRIPTION
+            };
+
+            return await _telegramService.SendMessage(message);
+        }
+
+        public async Task<bool> RemoveSubscriptionAsync(int chatId)
+        {
+            var updateRequest = _updateRequestBuilder
+                                    .CreateRequest(chatId)
+                                    .Build();
+
+            var updateResult = await _subscribtionStore.RemoveAsync(updateRequest);
+
+            if (!updateResult)
+            {
+                return false;
+            }
+
+            var message = new TelegramMessage
+            {
+                ChatId = chatId.ToString(),
+                Text = BotDialog.REMOVE_SUBSCRIPTION
             };
 
             return await _telegramService.SendMessage(message);
@@ -128,23 +151,10 @@ namespace KandilliEarthquakeBot.Services
 
         public Task<bool> AskLocationAsync(int chatId)
         {
-            var replyMarkup = new TelegramReplyKeyboardMarkup
-            {
-                Keyboard = new List<IEnumerable<TelegramKeyboardButton>>{
-                    new List<TelegramKeyboardButton>
-                    {
-                        new TelegramKeyboardButton { Text = "Konum Bilgimi Paylas", RequestLocation = true }
-                    }
-                },
-                OneTimeKeyboard = true
-            };
-
-
             var message = new TelegramMessage
             {
                 ChatId = chatId.ToString(),
-                Text = BotDialog.ASK_LOCATION,
-                ReplyMarkup = JsonConvert.SerializeObject(replyMarkup)
+                Text = BotDialog.ASK_LOCATION
             };
 
             return _telegramService.SendMessage(message);

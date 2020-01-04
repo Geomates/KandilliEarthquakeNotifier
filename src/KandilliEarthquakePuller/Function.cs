@@ -55,10 +55,11 @@ namespace KandilliEarthquakePuller
             LambdaLogger.Log(newEarthquakes.Count() + " new earthquakes\n");
 
             var lastNotifiedEarthQuake = lastFetchDate;
+            int searchRadius = 100000; //in meters, 100km
 
-            foreach(var newEarthQuake in newEarthquakes)
-            {
-                var subscribers = await subscriptionService.GetByMagnitudeAsync(newEarthQuake.Magnitude);
+            foreach (var newEarthQuake in newEarthquakes)
+            {                
+                var subscribers = await subscriptionService.GetAsync(newEarthQuake.Magnitude, newEarthQuake.Latitude, newEarthQuake.Longitude, searchRadius);
                 int i = 0;
                 int chunkSize = 10;
                 int[][] chunks = subscribers.GroupBy(s => i++ / chunkSize).Select(g => g.ToArray()).ToArray();
