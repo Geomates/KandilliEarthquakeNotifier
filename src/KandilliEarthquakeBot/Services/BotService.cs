@@ -13,7 +13,7 @@ namespace KandilliEarthquakeBot.Services
     {
         Task<bool> AskLocationAsync(int chatId);
         Task<bool> AskMagnitudeAsync(int chatId);
-        Task<bool> SetMagnitudeAsync(string callbackQueryId, int chatId, double magnitude);
+        Task<bool> SetMagnitudeAsync(int linkedMessageId, int chatId, double magnitude);
         Task<bool> SetLocationAsync(int chatId, Location location);
         Task<bool> StartSubscriptionAsync(int chatId);
         Task<bool> RemoveSubscriptionAsync(int chatId);
@@ -103,7 +103,7 @@ namespace KandilliEarthquakeBot.Services
             return _telegramService.SendMessage(message);
         }
 
-        public async Task<bool> SetMagnitudeAsync(string callbackQueryId, int chatId, double magnitude)
+        public async Task<bool> SetMagnitudeAsync(int linkedMessageId, int chatId, double magnitude)
         {
             var updateRequest = _updateRequestBuilder
                                     .CreateRequest(chatId)
@@ -117,13 +117,20 @@ namespace KandilliEarthquakeBot.Services
                 return false;
             }
 
-            var message = new AnswerCallbackQuery
+            var deleteMessage = new TelegramDeleteMessage
             {
-                CallbackQueryId = callbackQueryId,
+                ChatId = chatId,
+                MessageId = linkedMessageId
+            };
+            await _telegramService.DeleteMessage(deleteMessage);
+
+            var message = new TelegramMessage
+            {
+                ChatId = chatId.ToString(),
                 Text = string.Format(BotDialog.REPLY_MAGNITUDE, magnitude)
             };
 
-            return await _telegramService.AnswerCallbackQuery(message);
+            return await _telegramService.SendMessage(message);
         }
 
         public async Task<bool> SetLocationAsync(int chatId, Location location)

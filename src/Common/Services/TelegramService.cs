@@ -10,6 +10,7 @@ namespace Common.Services
     public interface ITelegramService
     {
         Task<bool> SendMessage(TelegramMessage message);
+        Task<bool> DeleteMessage(TelegramDeleteMessage telegramDeleteMessage);
         Task<bool> AnswerCallbackQuery(AnswerCallbackQuery answerCallbackQuery);
     }
 
@@ -25,6 +26,24 @@ namespace Common.Services
             _apiToken = environmentService.GetEnvironmentValue(TELEGRAM_API_TOKEN);
         }
 
+        public async Task<bool> DeleteMessage(TelegramDeleteMessage telegramDeleteMessage)
+        {
+            var url = $"{TELEGRAM_API_URL}/bot{_apiToken}/deleteMessage";
+            var content = new StringContent(JsonConvert.SerializeObject(telegramDeleteMessage, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }), Encoding.UTF8, "application/json");
+
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.PostAsync(url, content))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+                }
+                return true;
+            }
+        }
 
         public async Task<bool> SendMessage(TelegramMessage message)
         {
