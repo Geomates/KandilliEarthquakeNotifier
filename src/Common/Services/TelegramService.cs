@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.Exceptions;
+using Common.Models;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
@@ -58,7 +59,8 @@ namespace Common.Services
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception(await response.Content.ReadAsStringAsync());
+                    var reponse = JsonConvert.DeserializeObject<TelegramResponse>(await response.Content.ReadAsStringAsync());
+                    throw new TelegramApiException(reponse);
                 }
                 return true;
             }

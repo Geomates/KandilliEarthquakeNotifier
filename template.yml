@@ -23,6 +23,7 @@ Resources:
             Role: arn:aws:iam::065627307699:role/KandilliEarthquakeNotifierRole
             Environment:
                 Variables:
+                    DYNAMODB_TABLE_NAME: KandilliSubscribers
                     TELEGRAM_API_TOKEN: !Ref TelegramAPIToken
             Events:
                 KEarthquakeQueue:
