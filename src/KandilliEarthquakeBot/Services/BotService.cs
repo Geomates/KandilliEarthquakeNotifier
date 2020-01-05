@@ -36,6 +36,7 @@ namespace KandilliEarthquakeBot.Services
         {
             var updateRequest = _updateRequestBuilder
                                     .CreateRequest(chatId)
+                                    .SetMagnitude(0)
                                     .Build();
 
             var updateResult = await _subscribtionStore.UpdateAsync(updateRequest);
