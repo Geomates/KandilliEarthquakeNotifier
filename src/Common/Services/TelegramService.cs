@@ -59,8 +59,7 @@ namespace Common.Services
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    var reponse = JsonConvert.DeserializeObject<TelegramResponse>(await response.Content.ReadAsStringAsync());
-                    throw new TelegramApiException(reponse);
+                    throw new TelegramApiException(await response.Content.ReadAsStringAsync());
                 }
                 return true;
             }

@@ -7,10 +7,11 @@ namespace Common.Exceptions
     public class TelegramApiException : Exception
     {
         public TelegramResponse Response { get; }
-        public TelegramApiException(TelegramResponse response)
-            :base(JsonConvert.SerializeObject(response))
+
+        public TelegramApiException(string response)
+            :base(response)
         {
-            Response = response;
+            Response = JsonConvert.DeserializeObject<TelegramResponse>(response);
         }
     }
 }
