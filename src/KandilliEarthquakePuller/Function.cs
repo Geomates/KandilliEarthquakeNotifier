@@ -55,7 +55,7 @@ namespace KandilliEarthquakePuller
             LambdaLogger.Log(newEarthquakes.Count() + " new earthquakes\n");
 
             var lastNotifiedEarthQuake = lastFetchDate;
-            int searchRadius = 100000; //in meters, 100km
+            int searchRadius = 200000; //in meters, 200km
 
             foreach (var newEarthQuake in newEarthquakes)
             {                
