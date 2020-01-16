@@ -8,6 +8,7 @@ using KandilliEarthquakeBot.Models;
 using KandilliEarthquakeBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -20,7 +21,26 @@ namespace KandilliEarthquakeBot
         {
             LambdaLogger.Log(request.Body);
 
-            WebhookMessage webhookMessage = JsonConvert.DeserializeObject<WebhookMessage>(request.Body);
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = (int)HttpStatusCode.OK
+            };
+
+            WebhookMessage webhookMessage = null;
+
+            try
+            {
+                webhookMessage = JsonConvert.DeserializeObject<WebhookMessage>(request.Body);
+            }
+            catch(Exception ex)
+            {
+                LambdaLogger.Log("Error: " + ex.Message);
+            }
+            
+            if (webhookMessage == null)
+            {
+                return response;
+            }
 
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
@@ -66,12 +86,7 @@ namespace KandilliEarthquakeBot
                         }                        
                         break;
                 }
-            }
-
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = (int)HttpStatusCode.OK
-            };
+            }            
 
             return response;
         }
