@@ -1,6 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using Common.Exceptions;
 using Common.Services;
 using KandilliEarthquakeBot.Enums;
 using KandilliEarthquakeBot.Helpers;
@@ -49,24 +50,31 @@ namespace KandilliEarthquakeBot
 
             if (webhookMessage.Message?.Text != null && CommandHelper.TryParseCommand(webhookMessage.Message.Text, out Command command))
             {
-                switch(command)
+                try
                 {
-                    case Command.Start:
-                        await botService.StartSubscriptionAsync(webhookMessage.Message.Chat.Id);
-                        break;
-                    case Command.Stop:
-                        await botService.RemoveSubscriptionAsync(webhookMessage.Message.Chat.Id);
-                        break;
-                    case Command.Magnitude:
-                        await botService.AskMagnitudeAsync(webhookMessage.Message.Chat.Id);
-                        break;
-                    case Command.Location:
-                        await botService.AskLocationAsync(webhookMessage.Message.Chat.Id);
-                        break;
-                    case Command.RemoveLocation:
-                        await botService.RemoveLocationAsync(webhookMessage.Message.Chat.Id);
-                        break;
+                    switch (command)
+                    {
+                        case Command.Start:
+                            await botService.StartSubscriptionAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                        case Command.Stop:
+                            await botService.RemoveSubscriptionAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                        case Command.Magnitude:
+                            await botService.AskMagnitudeAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                        case Command.Location:
+                            await botService.AskLocationAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                        case Command.RemoveLocation:
+                            await botService.RemoveLocationAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                    }
                 }
+                catch (TelegramApiException exception) when (exception.Response.ErrorCode == 403) //bot blocked, delete subscription
+                {
+                    await botService.RemoveSubscriptionAsync(webhookMessage.Message.Chat.Id);
+                }                
             }
 
             if (webhookMessage.Message?.Location != null)

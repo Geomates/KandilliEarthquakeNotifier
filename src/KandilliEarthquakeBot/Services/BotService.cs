@@ -63,18 +63,7 @@ namespace KandilliEarthquakeBot.Services
 
             var updateResult = await _subscribtionStore.RemoveAsync(updateRequest);
 
-            if (!updateResult)
-            {
-                return false;
-            }
-
-            var message = new TelegramMessage
-            {
-                ChatId = chatId.ToString(),
-                Text = BotDialog.REMOVE_SUBSCRIPTION
-            };
-
-            return await _telegramService.SendMessage(message);
+            return updateResult;
         }
 
         public Task<bool> AskMagnitudeAsync(int chatId)
