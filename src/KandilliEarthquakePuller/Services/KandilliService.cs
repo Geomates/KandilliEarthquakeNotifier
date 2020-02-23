@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace KandilliEarthquakePuller.Services
@@ -22,6 +23,7 @@ namespace KandilliEarthquakePuller.Services
         public KandilliService(IEnvironmentService environmentService)
         {
             _pageURL = environmentService.GetEnvironmentValue(KANDILLI_PAGE_URL);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
 
         public async Task<IEnumerable<Earthquake>> GetEarthquakes()
@@ -32,7 +34,7 @@ namespace KandilliEarthquakePuller.Services
             using (HttpResponseMessage response = await client.GetAsync(_pageURL))
             {
                 HtmlDocument htmlDocument = new HtmlDocument();
-                htmlDocument.LoadHtml(await response.Content.ReadAsStringAsync());
+                htmlDocument.Load(await response.Content.ReadAsStreamAsync(), Encoding.GetEncoding(1254));
 
                 var lines = ReadLines(htmlDocument);
 
