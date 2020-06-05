@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 
 namespace KandilliEarthquakePuller.Services
 {
@@ -38,7 +39,7 @@ namespace KandilliEarthquakePuller.Services
 
                 var lines = ReadLines(htmlDocument);
 
-                var result = lines.Select(l => ParseLine(l)).ToList();
+                var result = lines.Select(ParseLine).Where(l => l != null).ToList();
 
                 return result;
             }
@@ -63,26 +64,56 @@ namespace KandilliEarthquakePuller.Services
         {
             var chunks = line.Split(' ').Where(l => l.Trim().Length > 0).ToArray();
             // Date & Time
-            DateTime date = DateTime.ParseExact(chunks[0] + ' ' + chunks[1], "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
+            var isValid = DateTime.TryParseExact(chunks[0] + ' ' + chunks[1], "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AllowWhiteSpaces, out DateTime date);
+            if (!isValid)
+            {
+                LambdaLogger.Log("Date is not correct: " + chunks[0] + ' ' + chunks[1]);
+                return null;
+            }
 
             // Latitude
-            double.TryParse(chunks[2], out var latitude);
-            //double latitude = double.Parse();
+            isValid = double.TryParse(chunks[2], out var latitude);
+            if (!isValid)
+            {
+                LambdaLogger.Log("Latitude is not correct: " + chunks[2]);
+                return null;
+            }
 
             // Longitude
-            double.TryParse(chunks[3], out double longitude);
-            //double longitude = double.Parse(chunks[3]);
+            isValid = double.TryParse(chunks[3], out double longitude);
+            if (!isValid)
+            {
+                LambdaLogger.Log("Longitude is not correct: " + chunks[3]);
+                return null;
+            }
 
             // Depth 
-            double.TryParse(chunks[4], out double depth);
-            //double depth = double.Parse(chunks[4]);
+            isValid = double.TryParse(chunks[4], out double depth);
+            if (!isValid)
+            {
+                LambdaLogger.Log("Depth is not correct: " + chunks[4]);
+            }
 
             // Magnitude
-            double.TryParse(chunks[6], out double magnitude);
-            //double magnitude = double.Parse(chunks[6]);
+            isValid = double.TryParse(chunks[6], out double magnitude);
+            if (!isValid)
+            {
+                LambdaLogger.Log("Magnitude(ML) is not correct: " + chunks[6]);
+                isValid = double.TryParse(chunks[7], out magnitude);
+                if (!isValid)
+                {
+                    LambdaLogger.Log("Magnitude(Mw) is not correct: " + chunks[7]);
+                    return null;
+                }
+            }
 
             // Location
-            string location = string.Join(' ', chunks.Skip(8).Take(chunks.Length - 1 - 8));
+            var location = string.Join(' ', chunks.Skip(8).Take(chunks.Length - 1 - 8));
+            if (string.IsNullOrEmpty(location))
+            {
+                LambdaLogger.Log("Location is not correct");
+                return null;
+            }
 
             Earthquake model = new Earthquake
             {
