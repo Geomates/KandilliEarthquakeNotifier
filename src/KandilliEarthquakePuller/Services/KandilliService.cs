@@ -64,16 +64,20 @@ namespace KandilliEarthquakePuller.Services
             DateTime date = DateTime.ParseExact(chunks[0] + ' ' + chunks[1], "yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture);
 
             // Latitude
-            double latitude = double.Parse(chunks[2]);
+            double.TryParse(chunks[2], out var latitude);
+            //double latitude = double.Parse();
 
             // Longitude
-            double longitude = double.Parse(chunks[3]);
+            double.TryParse(chunks[3], out double longitude);
+            //double longitude = double.Parse(chunks[3]);
 
             // Depth 
-            double depth = double.Parse(chunks[4]);
+            double.TryParse(chunks[4], out double depth);
+            //double depth = double.Parse(chunks[4]);
 
             // Magnitude
-            double magnitude = double.Parse(chunks[6]);
+            double.TryParse(chunks[6], out double magnitude);
+            //double magnitude = double.Parse(chunks[6]);
 
             // Location
             string location = string.Join(' ', chunks.Skip(8).Take(chunks.Length - 1 - 8));
