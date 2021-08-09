@@ -20,8 +20,8 @@ jobs:
     - name: build
       run: dotnet build
     - name: install aws lambda tool
-      if: ${{ github.ref == 'refs/heads/master' }}
+      #if: ${{ github.ref == 'refs/heads/master' }}
       run: dotnet tool install -g Amazon.Lambda.Tools
     - name: deploy
-      if: ${{ github.ref == 'refs/heads/master' }}
+      #if: ${{ github.ref == 'refs/heads/master' }}
       run:  ~/.dotnet/tools/dotnet-lambda deploy-serverless --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-key ${AWS_SECRET_ACCESS_KEY} -tp 'TelegramAPIToken=${TELEGRAM_API_TOKEN};KandilliPageUrl=${KANDILLI_PAGE_URL}'
