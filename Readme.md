@@ -16,7 +16,7 @@ This project pulls the latest earthquakes from [Kandilli's website](http://www.k
 ![Diagram](./KandilliBotDiagram.png)
 
 ## Technology Stack
-- .Net Core 2.1 - C#
+- .Net Core 3.1 - C#
 - [AWS Lambda](https://aws.amazon.com/lambda/)
 - [AWS SQS](https://aws.amazon.com/sqs/)
 - [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
