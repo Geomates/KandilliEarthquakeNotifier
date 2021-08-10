@@ -1,7 +1,7 @@
 
 # AWS Lambda - Kandilli Earthquake Notifier
 
-[![Build Status](https://www.travis-ci.com/Geomates/KandilliEarthquakeNotifier.svg?branch=master)](https://www.travis-ci.com/Geomates/KandilliEarthquakeNotifier)
+[![Build and Deploy](https://github.com/Geomates/KandilliEarthquakeNotifier/actions/workflows/deploy-lambda.yaml/badge.svg)](https://github.com/Geomates/KandilliEarthquakeNotifier/actions/workflows/deploy-lambda.yaml)
 
 This project pulls the latest earthquakes from [Kandilli's website](http://www.koeri.boun.edu.tr) and pushes to a dedicated [Telegram channel](https://t.me/kandillisondepremler) and subscribers via Telegram Bot.
 

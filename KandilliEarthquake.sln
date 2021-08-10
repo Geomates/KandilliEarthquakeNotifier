@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{BD
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		.travis.yml = .travis.yml
 		aws-lambda-tools-defaults.json = aws-lambda-tools-defaults.json
 		.github\workflows\deploy-lambda.yaml = .github\workflows\deploy-lambda.yaml
 		KandilliBotDiagram.png = KandilliBotDiagram.png

@@ -1,4 +1,4 @@
-name: Deploy Lambda
+name: Build and Deploy
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     - name: build
       run: dotnet build
     - name: install aws lambda tool
-      #if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       run: dotnet tool install -g Amazon.Lambda.Tools
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -29,5 +29,5 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
     - name: deploy
-      #if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       run:  ~/.dotnet/tools/dotnet-lambda deploy-serverless -tp 'TelegramAPIToken=${{ secrets.TELEGRAM_API_TOKEN }};KandilliPageUrl=${{ secrets.KANDILLI_PAGE_URL }}'
