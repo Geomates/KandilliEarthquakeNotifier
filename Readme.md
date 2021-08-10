@@ -1,7 +1,7 @@
 
 # AWS Lambda - Kandilli Earthquake Notifier
 
-[![Build Status](https://travis-ci.org/Geomates/KandilliEarthquakeNotifier.svg?branch=master)](https://travis-ci.org/Geomates/KandilliEarthquakeNotifier)
+[![Build and Deploy](https://github.com/Geomates/KandilliEarthquakeNotifier/actions/workflows/deploy-lambda.yaml/badge.svg)](https://github.com/Geomates/KandilliEarthquakeNotifier/actions/workflows/deploy-lambda.yaml)
 
 This project pulls the latest earthquakes from [Kandilli's website](http://www.koeri.boun.edu.tr) and pushes to a dedicated [Telegram channel](https://t.me/kandillisondepremler) and subscribers via Telegram Bot.
 
@@ -16,7 +16,7 @@ This project pulls the latest earthquakes from [Kandilli's website](http://www.k
 ![Diagram](./KandilliBotDiagram.png)
 
 ## Technology Stack
-- .Net Core 2.1 - C#
+- .Net Core 3.1 - C#
 - [AWS Lambda](https://aws.amazon.com/lambda/)
 - [AWS SQS](https://aws.amazon.com/sqs/)
 - [AWS DynamoDB](https://aws.amazon.com/dynamodb/)

@@ -15,7 +15,7 @@ Resources:
         Properties:
             FunctionName: KEarthquakeNotifier
             Handler: KandilliEarthquakeNotifier::KandilliEarthquakeNotifier.Function::FunctionHandler
-            Runtime: dotnetcore2.1
+            Runtime: dotnetcore3.1
             CodeUri: ./src/KandilliEarthquakeNotifier/
             Description: Earthquake notifier to Telegram subscribers
             MemorySize: 256
@@ -37,7 +37,7 @@ Resources:
         Properties:
             FunctionName: KEarthquakePuller
             Handler: KandilliEarthquakePuller::KandilliEarthquakePuller.Function::FunctionHandler
-            Runtime: dotnetcore2.1
+            Runtime: dotnetcore3.1
             CodeUri: ./src/KandilliEarthquakePuller/
             Description: Earthquake puller and distributer. Pulls data from Kandilli website.
             MemorySize: 256
@@ -63,7 +63,7 @@ Resources:
         Properties:
             FunctionName: KEarthquakeBot
             Handler: KandilliEarthquakeBot::KandilliEarthquakeBot.Function::FunctionHandler
-            Runtime: dotnetcore2.1
+            Runtime: dotnetcore3.1
             CodeUri: ./src/KandilliEarthquakeBot/
             Description: Earthquake bot to notify subscribers based on their preferences.
             MemorySize: 256
