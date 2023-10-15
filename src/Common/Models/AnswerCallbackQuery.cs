@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class AnswerCallbackQuery
     {
-        [JsonProperty("callback_query_id")]
+        [JsonPropertyName("callback_query_id")]
         public string CallbackQueryId { get; set; }
 
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
-        [JsonProperty("show_alert")]
+        [JsonPropertyName("show_alert")]
         public bool ShowAlert { get; set; }
     }
 }

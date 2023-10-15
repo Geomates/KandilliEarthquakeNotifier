@@ -1,9 +1,10 @@
 ﻿using Common.Exceptions;
 using Common.Models;
-using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Common.Services
@@ -17,22 +18,22 @@ namespace Common.Services
 
     public class TelegramService : ITelegramService
     {
-        private const string TELEGRAM_API_URL = "https://api.telegram.org";
-        private const string TELEGRAM_API_TOKEN = "TELEGRAM_API_TOKEN";
+        private const string TelegramApiUrl = "https://api.telegram.org";
+        private const string TelegramApiToken = "TELEGRAM_API_TOKEN";
 
         private readonly string _apiToken;
 
         public TelegramService(IEnvironmentService environmentService)
         {
-            _apiToken = environmentService.GetEnvironmentValue(TELEGRAM_API_TOKEN);
+            _apiToken = environmentService.GetEnvironmentValue(TelegramApiToken);
         }
 
         public async Task<bool> DeleteMessage(TelegramDeleteMessage telegramDeleteMessage)
         {
-            var url = $"{TELEGRAM_API_URL}/bot{_apiToken}/deleteMessage";
-            var content = new StringContent(JsonConvert.SerializeObject(telegramDeleteMessage, new JsonSerializerSettings
+            var url = $"{TelegramApiUrl}/bot{_apiToken}/deleteMessage";
+            var content = new StringContent(JsonSerializer.Serialize(telegramDeleteMessage, new JsonSerializerOptions
             {
-                NullValueHandling = NullValueHandling.Ignore
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             }), Encoding.UTF8, "application/json");
 
             using (HttpClient client = new HttpClient())
@@ -42,10 +43,10 @@ namespace Common.Services
 
         public async Task<bool> SendMessage(TelegramMessage message)
         {
-            var url = $"{TELEGRAM_API_URL}/bot{_apiToken}/sendMessage";
-            var content = new StringContent(JsonConvert.SerializeObject(message, new JsonSerializerSettings
+            var url = $"{TelegramApiUrl}/bot{_apiToken}/sendMessage";
+            var content = new StringContent(JsonSerializer.Serialize(message, new JsonSerializerOptions
             {
-                NullValueHandling = NullValueHandling.Ignore
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             }), Encoding.UTF8, "application/json");
 
             using (HttpClient client = new HttpClient())
@@ -61,10 +62,10 @@ namespace Common.Services
 
         public async Task<bool> AnswerCallbackQuery(AnswerCallbackQuery answerCallbackQuery)
         {
-            var url = $"{TELEGRAM_API_URL}/bot{_apiToken}/answerCallbackQuery";
-            var content = new StringContent(JsonConvert.SerializeObject(answerCallbackQuery, new JsonSerializerSettings
+            var url = $"{TelegramApiUrl}/bot{_apiToken}/answerCallbackQuery";
+            var content = new StringContent(JsonSerializer.Serialize(answerCallbackQuery, new JsonSerializerOptions
             {
-                NullValueHandling = NullValueHandling.Ignore
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             }), Encoding.UTF8, "application/json");
 
             using (HttpClient client = new HttpClient())

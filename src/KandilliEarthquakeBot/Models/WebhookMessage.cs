@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KandilliEarthquakeBot.Models
 {
     public class WebhookMessage
     {
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public Message Message { get; set; }
 
-        [JsonProperty("callback_query")]
+        [JsonPropertyName("callback_query")]
         public CallbackQuery CallbackQuery { get; set; }
     }
 }

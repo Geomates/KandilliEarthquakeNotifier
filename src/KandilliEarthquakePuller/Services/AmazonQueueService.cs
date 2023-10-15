@@ -2,10 +2,10 @@
 using Amazon.SQS.Model;
 using Common.Models;
 using Common.Services;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace KandilliEarthquakePuller.Services
@@ -17,14 +17,14 @@ namespace KandilliEarthquakePuller.Services
 
     public class AmazonQueueService : IQueueService
     {
-        private const string QUEUE_URL = "SQS_QUEUE_URL";
+        private const string QueueUrl = "SQS_QUEUE_URL";
 
-        private readonly IAmazonSQS _amazonSQS;
+        private readonly IAmazonSQS _amazonSqs;
         private readonly string _queueUrl;
-        public AmazonQueueService(IAmazonSQS amazonSQS, IEnvironmentService environmentService)
+        public AmazonQueueService(IAmazonSQS amazonSqs, IEnvironmentService environmentService)
         {
-            _amazonSQS = amazonSQS;
-            _queueUrl = environmentService.GetEnvironmentValue(QUEUE_URL);
+            _amazonSqs = amazonSqs;
+            _queueUrl = environmentService.GetEnvironmentValue(QueueUrl);
         }
 
         public async Task<bool> Enqueue(IEnumerable<TelegramMessage> telegramMessages)
@@ -32,10 +32,10 @@ namespace KandilliEarthquakePuller.Services
             var messages = telegramMessages.Select(m => new SendMessageBatchRequestEntry
             {
                 Id = Guid.NewGuid().ToString(),
-                MessageBody = JsonConvert.SerializeObject(m)
+                MessageBody = JsonSerializer.Serialize(m)
             }).ToList();
 
-            var response = await _amazonSQS.SendMessageBatchAsync(_queueUrl, messages);
+            var response = await _amazonSqs.SendMessageBatchAsync(_queueUrl, messages);
 
             return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
         }

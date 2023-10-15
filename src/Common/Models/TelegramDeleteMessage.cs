@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class TelegramDeleteMessage
     {
-        [JsonProperty("chat_id")]
+        [JsonPropertyName("chat_id")]
         public int ChatId { get; set; }
 
-        [JsonProperty("message_id")]
+        [JsonPropertyName("message_id")]
         public int MessageId { get; set; }
     }
 }

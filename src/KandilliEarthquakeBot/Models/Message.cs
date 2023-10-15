@@ -1,19 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KandilliEarthquakeBot.Models
 {
     public class Message
     {
-        [JsonProperty("message_id")]
+        [JsonPropertyName("message_id")]
         public int MessageId { get; set; }
 
-        [JsonProperty("chat")]
+        [JsonPropertyName("chat")]
         public Chat Chat { get; set; }
 
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
-        [JsonProperty("location")]
+        [JsonPropertyName("location")]
         public Location Location { get; set; }
     }
 }

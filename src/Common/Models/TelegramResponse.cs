@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class TelegramResponse
     {
-        [JsonProperty("error_code")]
+        [JsonPropertyName("error_code")]
         public int ErrorCode { get; set; }
 
-        [JsonProperty("description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Common.Models;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json;
 
 namespace Common.Exceptions
 {
@@ -11,7 +11,7 @@ namespace Common.Exceptions
         public TelegramApiException(string response)
             :base(response)
         {
-            Response = JsonConvert.DeserializeObject<TelegramResponse>(response);
+            Response = JsonSerializer.Deserialize<TelegramResponse>(response);
         }
     }
 }

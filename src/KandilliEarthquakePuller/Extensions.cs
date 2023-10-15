@@ -14,6 +14,7 @@ namespace KandilliEarthquakePuller
 
             stringBuilder.AppendLine($"Yer: [{earthquake.Location}]({googleMapsUrl})");
             stringBuilder.AppendLine($"Buyukluk: {earthquake.Magnitude}");
+            stringBuilder.AppendLine($"Derinlik: {earthquake.Depth} km");
             stringBuilder.AppendLine($"Zaman: {earthquake.Date.ToString("dd/MM/yyyy HH:mm")}");
 
             return stringBuilder.ToString();
