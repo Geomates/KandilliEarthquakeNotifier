@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class TelegramReplyKeyboardMarkup
     {
-        [JsonProperty("keyboard")]
+        [JsonPropertyName("keyboard")]
         public IEnumerable<IEnumerable<TelegramKeyboardButton>> Keyboard { get; set; }
 
-        [JsonProperty("one_time_keyboard")]
+        [JsonPropertyName("one_time_keyboard")]
         public bool OneTimeKeyboard { get; set; }
     }
 }

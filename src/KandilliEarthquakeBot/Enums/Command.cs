@@ -7,6 +7,7 @@
         Magnitude = 200,
         Location = 300,
         RemoveLocation = 301,
-        Stop = 400
+        Stop = 400,
+        About = 500
     }
 }

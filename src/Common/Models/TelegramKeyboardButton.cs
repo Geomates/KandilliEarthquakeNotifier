@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class TelegramKeyboardButton
     {
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
-        [JsonProperty("request_location")]
+        [JsonPropertyName("request_location")]
         public bool RequestLocation { get; set; }
     }
 }

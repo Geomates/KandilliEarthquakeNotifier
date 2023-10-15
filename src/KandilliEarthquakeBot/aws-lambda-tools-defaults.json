@@ -1,5 +1,5 @@
+
 {
-  "framework": "netcoreapp2.1",
-  "region": "eu-west-1",
-  "function-handler": "KandilliEarthquakeBot::KandilliEarthquakeBot.Function::FunctionHandler"
+    "region" : "eu-west-1",
+    "function-handler" : "KandilliEarthquakeBot::KandilliEarthquakeBot.Function::FunctionHandler"
 }

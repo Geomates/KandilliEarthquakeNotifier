@@ -1,9 +1,10 @@
-﻿using Common.Models;
+﻿using Amazon.Lambda.Core;
+using Common.Models;
 using Common.Services;
 using KandilliEarthquakeBot.Enums;
 using KandilliEarthquakeBot.Models;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace KandilliEarthquakeBot.Services
@@ -17,6 +18,7 @@ namespace KandilliEarthquakeBot.Services
         Task<bool> RemoveLocationAsync(int chatId);
         Task<bool> StartSubscriptionAsync(int chatId);
         Task<bool> RemoveSubscriptionAsync(int chatId);
+        Task<bool> About(int chatId);
     }
 
     public class BotService : IBotService
@@ -73,11 +75,11 @@ namespace KandilliEarthquakeBot.Services
                 InlineKeyboard = new List<IEnumerable<TelegramInlineKeyboardButton>>{
                     new List<TelegramInlineKeyboardButton>
                     {
-                        new TelegramInlineKeyboardButton { Text = "Hepsi", CallBackData = "0" },
-                        new TelegramInlineKeyboardButton { Text = "3.0+", CallBackData = "3" },
-                        new TelegramInlineKeyboardButton { Text = "4.0+", CallBackData = "4" },
-                        new TelegramInlineKeyboardButton { Text = "5.0+", CallBackData = "5" },
-                        new TelegramInlineKeyboardButton { Text = "6.0+", CallBackData = "6" }
+                        new() { Text = "Hepsi", CallBackData = "0" },
+                        new() { Text = "3.0+", CallBackData = "3" },
+                        new() { Text = "4.0+", CallBackData = "4" },
+                        new() { Text = "5.0+", CallBackData = "5" },
+                        new() { Text = "6.0+", CallBackData = "6" }
                     }
                 }
             };
@@ -87,8 +89,10 @@ namespace KandilliEarthquakeBot.Services
             {
                 ChatId = chatId.ToString(),
                 Text = BotDialog.ASK_MAGNITUDE,
-                ReplyMarkup = JsonConvert.SerializeObject(replyMarkup)
+                ReplyMarkup = JsonSerializer.Serialize(replyMarkup)
             };
+
+            LambdaLogger.Log(JsonSerializer.Serialize(message));
 
             return _telegramService.SendMessage(message);
         }
@@ -185,6 +189,18 @@ namespace KandilliEarthquakeBot.Services
             };
 
             return await _telegramService.SendMessage(message);
+        }
+
+        public Task<bool> About(int chatId)
+        {
+            var message = new TelegramMessage
+            {
+                ChatId = chatId.ToString(),
+                Text = BotDialog.ABOUT,
+                DisableWebPagePreview = true
+            };
+
+            return _telegramService.SendMessage(message);
         }
     }
 }

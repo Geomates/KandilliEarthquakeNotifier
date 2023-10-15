@@ -1,25 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
     public class TelegramMessage
     {
-        [JsonProperty("chat_id")]
+        [JsonPropertyName("chat_id")]
         public string ChatId { get; set; }
 
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
-        [JsonProperty("parse_mode")]
+        [JsonPropertyName("parse_mode")]
         public string ParseMode { get; set; }
 
-        [JsonProperty("disable_web_page_preview")]
+        [JsonPropertyName("disable_web_page_preview")]
         public bool DisableWebPagePreview { get; set; }
 
-        [JsonProperty("disable_notification")]
+        [JsonPropertyName("disable_notification")]
         public bool DisableNotification { get; set; }
 
-        [JsonProperty("reply_markup")]
+        [JsonPropertyName("reply_markup")]
         public string ReplyMarkup { get; set; }
     }
 }

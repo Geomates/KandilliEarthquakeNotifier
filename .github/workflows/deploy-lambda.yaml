@@ -14,9 +14,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
     - name: setup-dotnet
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '3.1.x'
+        dotnet-version: '6.0.x'
     - name: build
       run: dotnet build
     - name: install aws lambda tool

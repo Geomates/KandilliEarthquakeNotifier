@@ -8,9 +8,9 @@ using KandilliEarthquakeBot.Helpers;
 using KandilliEarthquakeBot.Models;
 using KandilliEarthquakeBot.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -31,7 +31,7 @@ namespace KandilliEarthquakeBot
 
             try
             {
-                webhookMessage = JsonConvert.DeserializeObject<WebhookMessage>(request.Body);
+                webhookMessage = JsonSerializer.Deserialize<WebhookMessage>(request.Body);
             }
             catch(Exception ex)
             {
@@ -68,6 +68,9 @@ namespace KandilliEarthquakeBot
                             break;
                         case Command.RemoveLocation:
                             await botService.RemoveLocationAsync(webhookMessage.Message.Chat.Id);
+                            break;
+                        case Command.About:
+                            await botService.About(webhookMessage.Message.Chat.Id);
                             break;
                     }
                 }

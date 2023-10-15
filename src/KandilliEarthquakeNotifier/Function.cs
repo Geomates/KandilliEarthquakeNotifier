@@ -6,7 +6,7 @@ using Common.Models;
 using Common.Services;
 using KandilliEarthquakeNotifier.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -27,7 +27,7 @@ namespace KandilliEarthquakeNotifier
             foreach (var record in sqsEvent.Records)
             {
                 LambdaLogger.Log($"Message ID: {record.MessageId}");
-                var telegramMessage = JsonConvert.DeserializeObject<TelegramMessage>(record.Body);
+                var telegramMessage = JsonSerializer.Deserialize<TelegramMessage>(record.Body);
                 try
                 {
                     await telegramService.SendMessage(telegramMessage);
