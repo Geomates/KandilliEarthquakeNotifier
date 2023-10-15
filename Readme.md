@@ -33,4 +33,4 @@ You can contrubute in various ways;
 
 ## How to Support
 
-You can support via [buying coffe to developer](https://www.buymeacoffee.com/mete)
+You can support via [buying a coffee to developer](https://www.buymeacoffee.com/mete)
