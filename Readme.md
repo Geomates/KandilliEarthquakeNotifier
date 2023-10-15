@@ -16,7 +16,7 @@ This project pulls the latest earthquakes from [Kandilli's website](http://www.k
 ![Diagram](./KandilliBotDiagram.png)
 
 ## Technology Stack
-- .Net Core 3.1 - C#
+- .Net 6 - C#
 - [AWS Lambda](https://aws.amazon.com/lambda/)
 - [AWS SQS](https://aws.amazon.com/sqs/)
 - [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
@@ -30,3 +30,7 @@ You can contrubute in various ways;
 -  Creating an issue on Issues page for new ideas
 -  Help for documentation
 -  Promote the project's website or [Telegram channel](https://t.me/kandillisondepremler) to your friend to reach more people
+
+## How to Support
+
+You can support via [buying coffe to developer](https://www.buymeacoffee.com/mete)
